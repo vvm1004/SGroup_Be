@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path  from 'path'
+import path from 'path';
 import { fileURLToPath } from 'url';
+import { readFile, writeFile } from '../../services/readWriteFile.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,22 +12,16 @@ class UserService {
     }
 
     loadUsers() {
-        const dataPath = path.join(__dirname, '..', 'data', 'data.json');
-        try {
-            const data = fs.readFileSync(dataPath, 'utf8');
-            this.users = JSON.parse(data);
-        } catch (error) {
-            console.error('Error reading data.json:', error);
+        const dataPath = path.join(__dirname, '..', '..', 'data', 'data.json');
+        const data = readFile(dataPath);
+        if (data) {
+            this.users = data;
         }
     }
 
     saveUsers() {
-        const dataPath = path.join(__dirname, '..', 'data', 'data.json');
-        try {
-            fs.writeFileSync(dataPath, JSON.stringify(this.users, null, 2), 'utf8');
-        } catch (error) {
-            console.error('Error writing to data.json:', error);
-        }
+        const dataPath = path.join(__dirname, '..', '..', 'data', 'data.json');
+        writeFile(dataPath, this.users);
     }
 
     getAllUsers() {

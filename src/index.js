@@ -1,5 +1,5 @@
 import express from 'express';
-import routers  from './routes/index.js';
+import routers  from './apis/access/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

@@ -1,4 +1,4 @@
-import userService from '../services/userService.js';
+import userService from './userService.js';
 
 class UserController {
     getAllUsers(req, res) {
