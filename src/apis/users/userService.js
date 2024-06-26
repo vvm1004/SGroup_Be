@@ -1,64 +1,52 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { readFile, writeFile } from '../../services/readWriteFile.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// userService.js
+import UserModel from '../../models/userModel.js';
+import bcrypt from 'bcrypt';
 
 class UserService {
-    constructor() {
-        this.users = [];
-        this.loadUsers();
-    }
-
-    loadUsers() {
-        const dataPath = path.join(__dirname, '..', '..', 'data', 'data.json');
-        const data = readFile(dataPath);
-        if (data) {
-            this.users = data;
+    async getAllUsers() {
+        try {
+            return await UserModel.getAllUsers();
+        } catch (error) {
+            throw new Error('Error in UserService.getAllUsers: ' + error.message);
         }
     }
 
-    saveUsers() {
-        const dataPath = path.join(__dirname, '..', '..', 'data', 'data.json');
-        writeFile(dataPath, this.users);
-    }
-
-    getAllUsers() {
-        return this.users;
-    }
-
-    getUserById(id) {
-        return this.users.find(user => user.id === id);
-    }
-
-    createUser(newUser) {
-        newUser.id = this.users.length + 1;
-        this.users.push(newUser);
-        this.saveUsers();
-    }
-
-    updateUser(id, updateUser) {
-        let userFound = false;
-        this.users = this.users.map(user => {
-            if (user.id === id) {
-                userFound = true;
-                return { ...user, ...updateUser };
-            }
-            return user;
-        });
-        if (userFound) this.saveUsers();
-        return userFound;
-    }
-
-    deleteUser(id) {
-        const initialLength = this.users.length;
-        this.users = this.users.filter(user => user.id !== id);
-        if (this.users.length < initialLength) {
-            this.saveUsers();
-            return true;
+    async getUserById(id) {
+        try {
+            return await UserModel.getUserById(id);
+        } catch (error) {
+            throw new Error('Error in UserService.getUserById: ' + error.message);
         }
-        return false;
+    }
+
+    async createUser(user) {
+        try {
+            const passwordString = String( user.password);
+            const hashedPassword = await bcrypt.hash(passwordString, 10); // Hash the password with a salt round of 10
+            user.password = hashedPassword
+            return await UserModel.createUser(user);
+        } catch (error) {
+            throw new Error('Error in UserService.createUser: ' + error.message);
+        }
+    }
+
+    async updateUser(id, user) {
+        try {
+            const passwordString = String( user.password);
+            const hashedPassword = user.password ? await bcrypt.hash(passwordString, 10) : null;
+            user.password = hashedPassword
+            return await UserModel.updateUser(id, user);
+        } catch (error) {
+            throw new Error('Error in UserService.updateUser: ' + error.message);
+        }
+    }
+
+    async deleteUser(id) {
+        try {
+            return await UserModel.deleteUser(id);
+        } catch (error) {
+            throw new Error('Error in UserService.deleteUser: ' + error.message);
+        }
     }
 }
 
