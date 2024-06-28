@@ -1,6 +1,5 @@
 // userModel.js
 import { connection } from '../database/config.js';
-
 class UserModel {
     constructor(id, name, gender, username, age, password, email) {
         this.id = id;
@@ -33,9 +32,9 @@ class UserModel {
 
     async createUser(user) {
         try {
-            const { name, email, password, gender, age } = user;
+            const { name, email, password, gender, age, username } = user;
        
-            const [result] = await connection.execute('INSERT INTO user (name, email, password, gender, age) VALUES (?, ?, ?, ?, ?)', [name, email, password, gender, age]);
+            const [result] = await connection.execute('INSERT INTO user (name, email, password, gender, age, username) VALUES (?, ?, ?, ?, ?, ?)', [name, email, password, gender, age, username]);
             return result.insertId;
         } catch (error) {
             throw new Error('Error creating user: ' + error.message);
@@ -62,6 +61,15 @@ class UserModel {
             return result.affectedRows > 0;
         } catch (error) {
             throw new Error('Error deleting user: ' + error.message);
+        }
+    }
+
+    async getUserByUserName(username) {
+        try {
+            const [rows] = await connection.execute('SELECT * FROM user WHERE username = ?', [username]);
+            return rows[0];
+        } catch (error) {
+            throw new Error('Error fetching user by username: ' + error.message);
         }
     }
 }
