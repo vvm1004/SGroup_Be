@@ -1,6 +1,6 @@
 // userService.js
 import UserModel from '../../models/userModel.js';
-import bcrypt from 'bcrypt';
+import PasswordService from '../../services/password.service.js';
 
 class UserService {
     async getAllUsers() {
@@ -21,9 +21,10 @@ class UserService {
 
     async createUser(user) {
         try {
-            const passwordString = String( user.password);
-            const hashedPassword = await bcrypt.hash(passwordString, 10); // Hash the password with a salt round of 10
-            user.password = hashedPassword
+            const salt = PasswordService.generateSalt();
+            const hashedPassword = PasswordService.hashPassword(user.password, salt);
+            user.password = hashedPassword;
+            user.salt = salt;
             return await UserModel.createUser(user);
         } catch (error) {
             throw new Error('Error in UserService.createUser: ' + error.message);
@@ -32,9 +33,12 @@ class UserService {
 
     async updateUser(id, user) {
         try {
-            const passwordString = String( user.password);
-            const hashedPassword = user.password ? await bcrypt.hash(passwordString, 10) : null;
-            user.password = hashedPassword
+            if (user.password) {
+                const salt = PasswordService.generateSalt();
+                const hashedPassword = PasswordService.hashPassword(user.password, salt);
+                user.password = hashedPassword;
+                user.salt = salt;
+            }
             return await UserModel.updateUser(id, user);
         } catch (error) {
             throw new Error('Error in UserService.updateUser: ' + error.message);

@@ -1,15 +1,15 @@
-// userModel.js
 import { connection } from '../database/config.js';
+
 class UserModel {
-    constructor(id, name, gender, username, age, password, email) {
+    constructor(id, name, gender, username, age, password, email, salt) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.age = age;
         this.password = password;
         this.email = email;
-        this.gender = gender; 
-     
+        this.gender = gender;
+        this.salt = salt;
     }
 
     async getAllUsers() {
@@ -32,9 +32,11 @@ class UserModel {
 
     async createUser(user) {
         try {
-            const { name, email, password, gender, age, username } = user;
-       
-            const [result] = await connection.execute('INSERT INTO user (name, email, password, gender, age, username) VALUES (?, ?, ?, ?, ?, ?)', [name, email, password, gender, age, username]);
+            const { name, email, password, gender, age, username, salt } = user;
+            const [result] = await connection.execute(
+                'INSERT INTO user (name, email, password, gender, age, username, salt) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [name, email, password, gender, age, username, salt]
+            );
             return result.insertId;
         } catch (error) {
             throw new Error('Error creating user: ' + error.message);
@@ -43,11 +45,10 @@ class UserModel {
 
     async updateUser(id, user) {
         try {
-            const { name, email, password, gender, age } = user;
-        
+            const { name, email, password, gender, age, salt } = user;
             const [result] = await connection.execute(
-                'UPDATE user SET name = ?, email = ?, password = COALESCE(?, password), gender = ?, age = ? WHERE id = ?',
-                [name, email, password, gender, age, id]
+                'UPDATE user SET name = ?, email = ?, password = COALESCE(?, password), gender = ?, age = ?, salt = COALESCE(?, salt) WHERE id = ?',
+                [name, email, password, gender, age, salt, id]
             );
             return result.affectedRows > 0;
         } catch (error) {

@@ -5,7 +5,7 @@ class AuthController {
         try {
             const user = req.body;
             const token = await AuthService.register(user);
-            res.status(201).json({user,  token });
+            res.status(201).json({ success: true, token: token });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
@@ -15,7 +15,7 @@ class AuthController {
         try {
             const { username, password } = req.body;
             const token = await AuthService.login(username, password);
-            res.status(200).json({username, token });
+            res.status(200).json({ success: true, token: token });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }

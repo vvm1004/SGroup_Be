@@ -1,7 +1,7 @@
 import UserModel from '../../models/userModel.js';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import 'dotenv/config'
+import PasswordService from '../../services/password.service.js';
+import 'dotenv/config';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -11,21 +11,23 @@ class AuthService {
         if (existingUser) {
             throw new Error('User already exists');
         }
-        const password = String(user.password)
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
 
-        const userId = await UserModel.createUser(user)
+        const salt = PasswordService.generateSalt();
+        const hashedPassword = PasswordService.hashPassword(user.password, salt);
+        user.password = hashedPassword;
+        user.salt = salt;
+
+        const userId = await UserModel.createUser(user);
         return this.generateToken({ id: userId });
     }
 
     async login(username, password) {
-        const user = await UserModel.getUserByUserName(username);;
+        const user = await UserModel.getUserByUserName(username);
         if (!user) {
             throw new Error('User not found');
         }
 
-        const isPasswordValid = await bcrypt.compare(String(password), user.password);
+        const isPasswordValid = PasswordService.verifyPassword(password, user.salt, user.password);
         if (!isPasswordValid) {
             throw new Error('Invalid password');
         }
@@ -34,7 +36,7 @@ class AuthService {
     }
 
     generateToken(payload) {
-        return jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+        return jwt.sign(payload, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
     }
 }
 
