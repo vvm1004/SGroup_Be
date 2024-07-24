@@ -24,6 +24,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use('/images', express.static(join(__dirname, 'images')));
 
+
+app.use(errorHandler)   
 // Multer configuration for file upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
