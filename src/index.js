@@ -59,3 +59,4 @@ app.post("/upload/multiple", uploadStorage.array("files", 10), (req, res) => {
         console.error('Database connection failed:', error);
     }
 })();
+
