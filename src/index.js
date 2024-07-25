@@ -25,7 +25,7 @@ const __dirname = dirname(__filename);
 app.use('/images', express.static(join(__dirname, 'images')));
 
 
-app.use(errorHandler)   
+app.use(errorHandler)
 // Multer configuration for file upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -37,9 +37,9 @@ const storage = multer.diskStorage({
 });
 
 const uploadStorage = multer({ storage: storage })
-app.get('/checkstatus', (req, res) => {
+app.get('/api/checkstatus', (req, res) => {
     res.send('Thành công');
-  });
+});
 
 // Single file upload endpoint
 app.post("/upload/single", uploadStorage.single("file"), (req, res) => {
