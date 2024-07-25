@@ -37,7 +37,9 @@ const storage = multer.diskStorage({
 });
 
 const uploadStorage = multer({ storage: storage })
-
+app.get('/checkstatus', (req, res) => {
+    res.send('Thành công');
+  });
 
 // Single file upload endpoint
 app.post("/upload/single", uploadStorage.single("file"), (req, res) => {
