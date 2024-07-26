@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 });
 
 const uploadStorage = multer({ storage: storage })
-app.get('/api/checkstatus', (req, res) => {
+app.get('/api/check', (req, res) => {
     res.send('Thành công');
 });
 
