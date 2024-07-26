@@ -19,6 +19,9 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
+
+
+
 // Serve uploaded images statically
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
