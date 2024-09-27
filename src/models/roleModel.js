@@ -21,6 +21,10 @@ class RoleModel {
         const [rows] = await db.execute('SELECT * FROM role WHERE id = ?', [id]);
         return rows[0];
     }
+    static async getRoleByName(name) {
+        const [rows] = await db.execute('SELECT * FROM role WHERE name = ?', [name]);
+        return rows[0];
+    }
 
     static async updateRole(id, role) {
         const { name, description, isActive } = role;

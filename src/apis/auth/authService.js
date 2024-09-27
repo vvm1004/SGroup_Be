@@ -52,9 +52,9 @@ class AuthService {
     }
 
     async resetPassword(token, newPassword) {
-     
+
         const user = await UserModel.getUserByResetToken(token);
-        if(!user || new Date(user.resetPassword) < new Date()){
+        if (!user || new Date(user.resetPassword) < new Date()) {
             throw new Error('Invalid or expired token');
         }
         const salt = PasswordService.generateSalt();

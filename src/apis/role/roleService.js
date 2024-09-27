@@ -2,12 +2,13 @@ import RoleModel from '../../models/roleModel.js';
 
 class RoleService {
     async createRole(role) {
-        try {
-            const { name, description, isActive } = role;
-            return await RoleModel.createRole({ name, description, isActive });
-        } catch (error) {
-            throw new Error('Error in RoleService.createRole: ' + error.message);
+        const { name, description, isActive } = role;
+        const existingRoleName = await RoleModel.getRoleByName(name);
+
+        if (existingRoleName) {
+            throw new Error('Role Name already exists');
         }
+        return await RoleModel.createRole({ name, description, isActive });
     }
 
     async getAllRoles() {
@@ -19,13 +20,9 @@ class RoleService {
     }
 
     async getRoleById(id) {
-        try {
-            const role = await RoleModel.getRoleById(id);
-            if (!role) throw new Error('Role not found');
-            return role;
-        } catch (error) {
-            throw new Error('Error in RoleService.getRoleById: ' + error.message);
-        }
+        const role = await RoleModel.getRoleById(id);
+        if (!role) throw new Error('Role not found');
+        return role;
     }
 
     async updateRole(id, role) {
@@ -38,6 +35,8 @@ class RoleService {
 
     async deleteRole(id) {
         try {
+            const role = await RoleModel.getRoleById(id);
+            if (!role) throw new Error('Role not found');
             await RoleModel.deleteRole(id);
         } catch (error) {
             throw new Error('Error in RoleService.deleteRole: ' + error.message);
