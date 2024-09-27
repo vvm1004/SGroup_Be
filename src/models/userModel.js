@@ -1,18 +1,6 @@
 import { connection } from '../database/config.js';
 
 class UserModel {
-    constructor(id, name, gender, username, age, password, email, salt, resetToken, resetTokenExpiration) {
-        this.id = id;
-        this.name = name;
-        this.username = username;
-        this.age = age;
-        this.password = password;
-        this.email = email;
-        this.gender = gender;
-        this.salt = salt;
-        this.resetToken = resetToken;
-        this.resetTokenExpiration = resetTokenExpiration;
-    }
 
     async getAllUsers() {
         try {
@@ -43,10 +31,10 @@ class UserModel {
 
     async createUser(user) {
         try {
-            const { name, email, password, gender, age, username, salt } = user;
+            const { name, email, password, gender, age, username, salt, role_id } = user;
             const [result] = await connection.execute(
-                'INSERT INTO user (name, email, password, gender, age, username, salt) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [name, email, password, gender, age, username, salt]
+                'INSERT INTO user (name, email, password, gender, age, username, salt, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [name, email, password, gender, age, username, salt, role_id]
             );
             return result.insertId;
         } catch (error) {

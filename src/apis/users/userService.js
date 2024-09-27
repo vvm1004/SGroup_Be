@@ -50,15 +50,20 @@ class UserService {
         }
     }
     async createUser(user) {
-        try {
-            const salt = PasswordService.generateSalt();
-            const hashedPassword = PasswordService.hashPassword(user.password, salt);
-            user.password = hashedPassword;
-            user.salt = salt;
-            return await UserModel.createUser(user);
-        } catch (error) {
-            throw new Error('Error in UserService.createUser: ' + error.message);
+        const existingUserName = await UserModel.getUserByUserName(user.username);
+        const existingEmail = await UserModel.getUserByEmail(user.email);
+
+        if (existingUserName) {
+            throw new Error('Username already exists');
         }
+        if (existingEmail) {
+            throw new Error('Email already exists');
+        }
+        const salt = PasswordService.generateSalt();
+        const hashedPassword = PasswordService.hashPassword(user.password, salt);
+        user.password = hashedPassword;
+        user.salt = salt;
+        return await UserModel.createUser(user);
     }
 
     async updateUser(id, user) {

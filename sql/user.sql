@@ -13,7 +13,7 @@ CREATE TABLE `user` (
 	PRIMARY KEY (`id`) USING BTREE,
 	UNIQUE INDEX `email` (`email`) USING BTREE,
 	INDEX `FK_user_role` (`role_id`) USING BTREE,
-	CONSTRAINT `FK_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+	CONSTRAINT `FK_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB

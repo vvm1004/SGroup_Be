@@ -31,7 +31,11 @@ class UserController {
             const userId = await userService.createUser(newUser);
             res.status(201).json({ message: 'User created successfully', id: userId });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            if (error.message === 'Username already exists' || error.message === 'Email already exists') {
+                res.status(400).json({ message: 'Username or email already exists' });
+            } else {
+                res.status(500).json({ message: error.message });
+            }
         }
     }
 
