@@ -22,6 +22,14 @@ class UserModel {
             throw new Error('Error fetching users: ' + error.message);
         }
     }
+    async getAllRoles() {
+        try {
+            const [rows] = await connection.execute('SELECT * FROM role');
+            return rows;
+        } catch (error) {
+            throw new Error('Error fetching role ' + error.message);
+        }
+    }
 
     async getUserById(id) {
         try {
@@ -31,6 +39,7 @@ class UserModel {
             throw new Error('Error fetching user by ID: ' + error.message);
         }
     }
+
 
     async createUser(user) {
         try {

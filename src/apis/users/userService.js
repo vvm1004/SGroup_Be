@@ -5,7 +5,24 @@ import PasswordService from '../../services/password.service.js';
 class UserService {
     async getAllUsers() {
         try {
-            return await UserModel.getAllUsers();
+            let users = await UserModel.getAllUsers();
+
+            const roles = await UserModel.getAllRoles();
+
+            const usersWithRoles = users.map(user => {
+                const userRole = roles.find(role => role.id === user.role_id);
+                delete user.role_id;
+                return {
+                    ...user,
+                    role: {
+                        name: userRole?.name || 'Unknown',
+                        description: userRole?.description || '',
+                        isActive: userRole?.isActive || false
+                    }
+                };
+            });
+
+            return usersWithRoles;
         } catch (error) {
             throw new Error('Error in UserService.getAllUsers: ' + error.message);
         }
@@ -13,12 +30,25 @@ class UserService {
 
     async getUserById(id) {
         try {
-            return await UserModel.getUserById(id);
+            const user = await UserModel.getUserById(id);
+            const roles = await UserModel.getAllRoles();
+
+            const userRole = roles.find(role => role.id === user.role_id);
+            delete user.role_id;
+            return {
+                ...user,
+                role: {
+                    name: userRole?.name || 'Unknown',
+                    description: userRole?.description || '',
+                    isActive: userRole?.isActive || false
+                }
+            };
+
+            // return await UserModel.getUserById(id);
         } catch (error) {
             throw new Error('Error in UserService.getUserById: ' + error.message);
         }
     }
-
     async createUser(user) {
         try {
             const salt = PasswordService.generateSalt();
