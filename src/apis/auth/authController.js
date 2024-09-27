@@ -21,6 +21,7 @@ class AuthController {
             const token = await AuthService.login(username, password);
             res.status(200).json({ success: true, token: token });
         } catch (error) {
+            console.log(error.message)
             if (error.message === 'User not found' || error.message === 'Invalid password') {
                 res.status(401).json({ success: false, message: 'Invalid username or password' });
             } else {
